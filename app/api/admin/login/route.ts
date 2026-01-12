@@ -77,8 +77,17 @@ export async function POST(request: NextRequest) {
       .update({ last_login: new Date().toISOString() })
       .eq('id', admin.id);
 
-    // Generate session token
-    const sessionToken = generateSessionToken();
+    // Use the static admin dashboard token
+    const sessionToken = process.env.ADMIN_DASHBOARD_TOKEN;
+    
+    if (!sessionToken) {
+      console.error('[Admin Login] ADMIN_DASHBOARD_TOKEN not set');
+      return NextResponse.json(
+        { error: 'Configuração do servidor incompleta (ADMIN_DASHBOARD_TOKEN)' },
+        { status: 500 }
+      );
+    }
+
     console.log('[Admin Login] Login successful');
 
     return NextResponse.json({

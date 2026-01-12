@@ -14,13 +14,15 @@ export async function GET() {
       NEXT_PUBLIC_SUPABASE_URL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      ADMIN_DASHBOARD_TOKEN: !!process.env.ADMIN_DASHBOARD_TOKEN,
       NODE_ENV: process.env.NODE_ENV,
       VERCEL: !!process.env.VERCEL,
     };
 
     const allPresent = checks.NEXT_PUBLIC_SUPABASE_URL && 
                        checks.NEXT_PUBLIC_SUPABASE_ANON_KEY && 
-                       checks.SUPABASE_SERVICE_ROLE_KEY;
+                       checks.SUPABASE_SERVICE_ROLE_KEY &&
+                       checks.ADMIN_DASHBOARD_TOKEN;
 
     return NextResponse.json({
       status: allPresent ? 'OK' : 'INCOMPLETE',
