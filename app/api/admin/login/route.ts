@@ -12,7 +12,19 @@ export const runtime = 'nodejs';
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log('[Admin Login] Starting login process...');
+    
+    // Check environment variables
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error('[Admin Login] Missing SUPABASE_SERVICE_ROLE_KEY');
+      return NextResponse.json(
+        { error: 'Configuração do servidor incompleta (SUPABASE_SERVICE_ROLE_KEY)' },
+        { status: 500 }
+      );
+    }
+
     const { email, password } = await request.json();
+    console.log('[Admin Login] Login attempt for:', email);
 
     if (!email || !password) {
       return NextResponse.json(
@@ -22,21 +34,34 @@ export async function POST(request: NextRequest) {
     }
 
     // Find admin user by email
+    console.log('[Admin Login] Querying database for user...');
     const { data: admin, error: adminError } = await supabaseAdmin
       .from('admin_users')
       .select('*')
       .eq('email', email.toLowerCase().trim())
       .single();
 
-    if (adminError || !admin) {
+    if (adminError) {
+      console.error('[Admin Login] Database error:', adminError);
       return NextResponse.json(
         { error: 'Email ou senha incorretos' },
         { status: 401 }
       );
     }
 
+    if (!admin) {
+      console.log('[Admin Login] User not found');
+      return NextResponse.json(
+        { error: 'Email ou senha incorretos' },
+        { status: 401 }
+      );
+    }
+
+    console.log('[Admin Login] User found, verifying password...');
+    
     // Verify password
     const isValidPassword = await verifyPassword(password, admin.password_hash);
+    console.log('[Admin Login] Password valid:', isValidPassword);
 
     if (!isValidPassword) {
       return NextResponse.json(
@@ -46,6 +71,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Update last login
+    console.log('[Admin Login] Updating last login...');
     await supabaseAdmin
       .from('admin_users')
       .update({ last_login: new Date().toISOString() })
@@ -53,6 +79,7 @@ export async function POST(request: NextRequest) {
 
     // Generate session token
     const sessionToken = generateSessionToken();
+    console.log('[Admin Login] Login successful');
 
     return NextResponse.json({
       success: true,
@@ -64,9 +91,13 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[Admin Login] Error:', error);
+    console.error('[Admin Login] Unexpected error:', error);
+    console.error('[Admin Login] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
-      { error: 'Erro ao fazer login. Tente novamente.' },
+      { 
+        error: 'Erro ao fazer login. Tente novamente.',
+        details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
+      },
       { status: 500 }
     );
   }
