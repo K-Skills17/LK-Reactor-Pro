@@ -42,7 +42,8 @@ export default function PricingPage() {
       color: 'blue',
       popular: true,
       cta: 'Começar Teste Grátis',
-      ctaLink: process.env.NEXT_PUBLIC_PRO_PAYMENT_URL || '#',
+      ctaLink: process.env.NEXT_PUBLIC_PRO_SUBSCRIBTION || '#',
+      ctaLinkAnnual: process.env.NEXT_PUBLIC_PRO_SUBSCRIBTION_YEARLY || '#',
       trial: '14 dias grátis',
       features: [
         '✨ Tudo no plano grátis +',
@@ -67,7 +68,8 @@ export default function PricingPage() {
       color: 'purple',
       popular: false,
       cta: 'Começar Teste Grátis',
-      ctaLink: process.env.NEXT_PUBLIC_PREMIUM_PAYMENT_URL || '#',
+      ctaLink: process.env.NEXT_PUBLIC_PREMIUM_SUBSCRIBTION || '#',
+      ctaLinkAnnual: process.env.NEXT_PUBLIC_PREMIUM_SUBSCRIBTION_YEARLY || '#',
       trial: '14 dias grátis',
       features: [
         '✨ Tudo no plano Professional +',
@@ -247,7 +249,13 @@ export default function PricingPage() {
 
                 {/* CTA Button */}
                 <a
-                  href={tier.ctaLink}
+                  href={
+                    tier.name === 'GRÁTIS'
+                      ? tier.ctaLink
+                      : billingCycle === 'annual' && 'ctaLinkAnnual' in tier
+                      ? tier.ctaLinkAnnual
+                      : tier.ctaLink
+                  }
                   className={`block w-full py-4 rounded-xl font-bold text-center transition-all ${
                     tier.popular
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:scale-105'
