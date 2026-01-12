@@ -8,10 +8,23 @@ import { verifyCampaignOwnership, getAIUsageToday, incrementAIUsage } from '@/li
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy-load OpenAI client (prevents build-time initialization)
+let openaiInstance: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (openaiInstance) {
+    return openaiInstance;
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('Missing OPENAI_API_KEY environment variable');
+  }
+
+  openaiInstance = new OpenAI({ apiKey });
+  return openaiInstance;
+}
 
 // Validation schema
 const aiGenerateSchema = z.object({
@@ -125,6 +138,7 @@ Diretrizes:
 - Evitar ser invasivo ou insistente`;
 
     // Call OpenAI API
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
