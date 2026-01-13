@@ -28,6 +28,16 @@ export default function PricingPage() {
         'Teste o sistema sem cartão de crédito',
         'Use por tempo ilimitado',
         'Faça upgrade quando quiser',
+        '❌ 500 mensagens/dia (apenas 10)',
+        '❌ Campanhas personalizadas com IA',
+        '❌ Painel web com estatísticas em tempo real',
+        '❌ Importar CSV com sua base de pacientes',
+        '❌ Deduplicação e lista de bloqueio',
+        '❌ Agendamento automático de campanhas',
+        '❌ Mensagens ilimitadas',
+        '❌ IA com 3 variações A/B/C de cada mensagem',
+        '❌ 7 tipos de campanha prontos',
+        '❌ Suporte prioritário (2h)',
       ],
       limits: '10 mensagens/dia',
       idealFor: 'Dentistas que querem testar antes',
@@ -229,8 +239,13 @@ export default function PricingPage() {
                 <div className="mb-8 space-y-3">
                   {tier.features.map((feature, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      {feature.startsWith('Tudo do') ? (
+                      {feature.startsWith('✨') ? (
                         <span className="text-sm font-semibold text-slate-700 mt-3">{feature}</span>
+                      ) : feature.startsWith('❌') ? (
+                        <>
+                          <X className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
+                          <span className="text-slate-400 text-sm leading-relaxed line-through">{feature.replace('❌ ', '')}</span>
+                        </>
                       ) : (
                         <>
                           <Check className={`w-5 h-5 ${getColorClasses(tier.color, 'text')} flex-shrink-0 mt-0.5`} />
