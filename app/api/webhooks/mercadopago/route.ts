@@ -120,21 +120,25 @@ export async function POST(request: Request) {
     });
     
     // ✨ Send activation email with license key
-    try {
-      await sendPaidLicenseEmail({
-        name: clinic.name || clinic.clinic_name || 'Cliente',
-        email: clinic.email,
-        clinicName: clinic.clinic_name || clinic.name || 'Clínica',
-        licenseKey: clinic.license_key,
-        tier: tier as 'PRO' | 'PREMIUM',
-        amount: amount,
-        billingCycle: billingCycle,
-        paymentId: paymentId
-      });
-      console.log(`✅ Activation email sent to: ${clinic.email}`);
-    } catch (emailError) {
-      console.error('❌ Failed to send activation email:', emailError);
-      // Don't fail the webhook if email fails - subscription is already activated
+    if (clinic) {
+      try {
+        await sendPaidLicenseEmail({
+          name: clinic.name || clinic.clinic_name || 'Cliente',
+          email: clinic.email,
+          clinicName: clinic.clinic_name || clinic.name || 'Clínica',
+          licenseKey: clinic.license_key,
+          tier: tier as 'PRO' | 'PREMIUM',
+          amount: amount,
+          billingCycle: billingCycle,
+          paymentId: paymentId
+        });
+        console.log(`✅ Activation email sent to: ${clinic.email}`);
+      } catch (emailError) {
+        console.error('❌ Failed to send activation email:', emailError);
+        // Don't fail the webhook if email fails - subscription is already activated
+      }
+    } else {
+      console.error('❌ Could not send activation email: clinic data not found');
     }
     
     return NextResponse.json({ 
