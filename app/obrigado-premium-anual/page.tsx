@@ -39,11 +39,11 @@ export default function ObrigadoPremiumAnualPage() {
               <span className="text-2xl sm:text-3xl font-bold">PLANO PREMIUM - ANUAL</span>
             </div>
             <p className="text-xl text-white/90 mb-2">
-              Assinatura ativa • R$ 4.970/ano • 14 dias grátis
+              Assinatura ativa • R$ 3.790/ano • 14 dias grátis
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 rounded-full">
               <TrendingDown className="w-5 h-5" />
-              <span className="font-bold">Você economizou R$ 994 no plano anual!</span>
+              <span className="font-bold">Você economizou R$ 2.174 no plano anual!</span>
             </div>
           </div>
         </div>
@@ -54,10 +54,10 @@ export default function ObrigadoPremiumAnualPage() {
         <section className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl shadow-xl p-6 text-white text-center">
           <h2 className="text-2xl font-bold mb-2">🎉 Parabéns! Você fez a escolha mais inteligente!</h2>
           <p className="text-lg">
-            Com o plano PREMIUM anual, você economiza <strong>R$ 994 por ano</strong> comparado ao plano mensal.
+            Com o plano PREMIUM anual, você economiza <strong>R$ 2.174 por ano</strong> comparado ao plano mensal.
           </p>
           <p className="text-sm mt-2 text-white/90">
-            Isso equivale a <strong>17% de desconto</strong> + garantia de preço fixo por 12 meses + todos os recursos PREMIUM!
+            Isso equivale a <strong>33% de desconto</strong> + garantia de preço fixo por 12 meses + todos os recursos PREMIUM!
           </p>
         </section>
 
@@ -149,7 +149,7 @@ export default function ObrigadoPremiumAnualPage() {
           <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-6 text-white text-center">
             <p className="text-lg font-bold mb-2">🎁 14 Dias de Teste Grátis</p>
             <p className="text-sm text-white/90">
-              Depois do período de teste, R$ 4.970 cobrado uma vez por ano
+              Depois do período de teste, R$ 3.790 cobrado uma vez por ano
             </p>
           </div>
         </section>
@@ -232,7 +232,7 @@ export default function ObrigadoPremiumAnualPage() {
             </div>
             <div className="flex gap-3 items-start">
               <span className="text-lg">💰</span>
-              <p><strong>Economia Garantida:</strong> Preço fixo por 12 meses + economia de R$ 994 comparado ao mensal.</p>
+              <p><strong>Economia Garantida:</strong> Preço fixo por 12 meses + economia de R$ 2.174 (33% OFF) comparado ao mensal.</p>
             </div>
           </div>
         </section>

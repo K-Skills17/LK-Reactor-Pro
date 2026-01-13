@@ -38,11 +38,11 @@ export default function ObrigadoProAnualPage() {
               <span className="text-2xl sm:text-3xl font-bold">PLANO PROFESSIONAL - ANUAL</span>
             </div>
             <p className="text-xl text-white/90 mb-2">
-              Assinatura ativa • R$ 1.970/ano • 14 dias grátis
+              Assinatura ativa • R$ 2.128/ano • 14 dias grátis
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 rounded-full">
               <TrendingDown className="w-5 h-5" />
-              <span className="font-bold">Você economizou R$ 394 no plano anual!</span>
+              <span className="font-bold">Você economizou R$ 236 no plano anual!</span>
             </div>
           </div>
         </div>
@@ -53,10 +53,10 @@ export default function ObrigadoProAnualPage() {
         <section className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl shadow-xl p-6 text-white text-center">
           <h2 className="text-2xl font-bold mb-2">💰 Parabéns! Você fez uma escolha inteligente!</h2>
           <p className="text-lg">
-            Com o plano anual, você economiza <strong>R$ 394 por ano</strong> comparado ao plano mensal.
+            Com o plano anual, você economiza <strong>R$ 236 por ano</strong> comparado ao plano mensal.
           </p>
           <p className="text-sm mt-2 text-white/90">
-            Isso equivale a <strong>17% de desconto</strong> + estabilidade de preço por 12 meses!
+            Isso equivale a <strong>10% de desconto</strong> + estabilidade de preço por 12 meses!
           </p>
         </section>
 
@@ -124,7 +124,7 @@ export default function ObrigadoProAnualPage() {
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white text-center">
             <p className="text-lg font-bold mb-2">🎁 14 Dias de Teste Grátis</p>
             <p className="text-sm text-white/90">
-              Depois do período de teste, R$ 1.970 cobrado uma vez por ano
+              Depois do período de teste, R$ 2.128 cobrado uma vez por ano
             </p>
           </div>
         </section>
@@ -201,10 +201,10 @@ export default function ObrigadoProAnualPage() {
               <span className="text-3xl">🟣</span>
               <h4 className="font-bold text-gray-900 text-lg">PREMIUM ANUAL</h4>
               <span className="text-xs bg-yellow-300 text-yellow-900 px-2 py-0.5 rounded-full font-bold">
-                ECONOMIZE R$ 994
+                ECONOMIZE R$ 2.174
               </span>
             </div>
-            <p className="text-3xl font-bold text-purple-600 mb-3">R$ 4.970/ano</p>
+            <p className="text-3xl font-bold text-purple-600 mb-3">R$ 3.790/ano</p>
             <ul className="text-sm text-gray-700 space-y-2 mb-4">
               <li className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-purple-600" />
