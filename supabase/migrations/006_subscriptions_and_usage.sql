@@ -16,9 +16,21 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_subscriptions_clinic_id ON subscriptions(clinic_id);
-CREATE INDEX idx_subscriptions_status ON subscriptions(status);
-CREATE INDEX idx_subscriptions_tier ON subscriptions(tier);
+-- Create indexes only if they don't exist
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_subscriptions_clinic_id') THEN
+    CREATE INDEX idx_subscriptions_clinic_id ON subscriptions(clinic_id);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_subscriptions_status') THEN
+    CREATE INDEX idx_subscriptions_status ON subscriptions(status);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_subscriptions_tier') THEN
+    CREATE INDEX idx_subscriptions_tier ON subscriptions(tier);
+  END IF;
+END $$;
 
 -- Usage tracking table - tracks daily usage per clinic
 CREATE TABLE IF NOT EXISTS usage_tracking (
@@ -33,8 +45,17 @@ CREATE TABLE IF NOT EXISTS usage_tracking (
   UNIQUE(clinic_id, date)
 );
 
-CREATE INDEX idx_usage_tracking_clinic_date ON usage_tracking(clinic_id, date);
-CREATE INDEX idx_usage_tracking_date ON usage_tracking(date);
+-- Create indexes only if they don't exist
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_usage_tracking_clinic_date') THEN
+    CREATE INDEX idx_usage_tracking_clinic_date ON usage_tracking(clinic_id, date);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_usage_tracking_date') THEN
+    CREATE INDEX idx_usage_tracking_date ON usage_tracking(date);
+  END IF;
+END $$;
 
 -- Add additional fields to clinics table if they don't exist
 DO $$ 
@@ -64,16 +85,31 @@ BEGIN
   END IF;
 END $$;
 
--- Add update triggers
-CREATE TRIGGER update_subscriptions_updated_at BEFORE UPDATE ON subscriptions
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Add update triggers only if they don't exist
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_subscriptions_updated_at') THEN
+    CREATE TRIGGER update_subscriptions_updated_at BEFORE UPDATE ON subscriptions
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_usage_tracking_updated_at') THEN
+    CREATE TRIGGER update_usage_tracking_updated_at BEFORE UPDATE ON usage_tracking
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
 
-CREATE TRIGGER update_usage_tracking_updated_at BEFORE UPDATE ON usage_tracking
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- Disable RLS (service-role only access from backend)
-ALTER TABLE subscriptions DISABLE ROW LEVEL SECURITY;
-ALTER TABLE usage_tracking DISABLE ROW LEVEL SECURITY;
+-- Disable RLS (service-role only access from backend) only if tables exist
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'subscriptions') THEN
+    ALTER TABLE subscriptions DISABLE ROW LEVEL SECURITY;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'usage_tracking') THEN
+    ALTER TABLE usage_tracking DISABLE ROW LEVEL SECURITY;
+  END IF;
+END $$;
 
 -- Create default FREE subscription for existing clinics
 INSERT INTO subscriptions (clinic_id, tier, status, billing_cycle, current_period_start, current_period_end)
