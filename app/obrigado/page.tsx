@@ -27,7 +27,7 @@ export default function ObrigadoPage() {
           </div>
           
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-            🎉 Pagamento Confirmado!
+            🎉 Cadastro Confirmado!
           </h1>
           
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 inline-block">
