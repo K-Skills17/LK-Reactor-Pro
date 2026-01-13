@@ -105,7 +105,7 @@ export async function POST(request: Request) {
     // Get clinic info for logging/email
     const { data: clinic } = await supabaseAdmin
       .from('clinics')
-      .select('email, name, clinic_name')
+      .select('email, name, clinic_name, license_key')
       .eq('id', clinicId)
       .single();
     
