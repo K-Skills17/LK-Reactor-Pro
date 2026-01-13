@@ -1,7 +1,17 @@
 import { Resend } from 'resend';
 
-// Initialize Resend with API key from environment
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-load Resend client to avoid build-time initialization
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend {
+  if (!resendClient) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not set in environment variables');
+    }
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resendClient;
+}
 
 // Email configuration
 const FROM_EMAIL = 'LK Reactor Pro <contato@lkdigital.org>';
@@ -21,6 +31,7 @@ export async function sendFreeLicenseEmail(data: {
   try {
     console.log(`📧 Sending FREE license email to: ${data.email}`);
 
+    const resend = getResendClient();
     const { data: emailData, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [data.email],
@@ -179,6 +190,7 @@ export async function sendPaidLicenseEmail(data: {
       ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
       : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)';
 
+    const resend = getResendClient();
     const { data: emailData, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [data.email],
