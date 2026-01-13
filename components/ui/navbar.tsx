@@ -32,7 +32,7 @@ export function Navbar() {
             href="/" 
             className="flex items-center group relative"
           >
-            <div className="relative h-12 sm:h-16 md:h-18 lg:h-20 w-auto">
+            <div className="relative h-16 sm:h-20 md:h-24 lg:h-28 w-auto">
               <Image
                 src="/lk-reactor-logo.svg"
                 alt="LK Reactor Pro"

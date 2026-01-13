@@ -172,9 +172,9 @@ function getTierFromAmount(amount: number): { tier: string; billingCycle: string
   // Match payment amounts to tiers and billing cycles
   const amountMap: Record<number, { tier: string; billingCycle: string }> = {
     197: { tier: 'PRO', billingCycle: 'monthly' },
-    1970: { tier: 'PRO', billingCycle: 'yearly' },
+    2128: { tier: 'PRO', billingCycle: 'yearly' },
     497: { tier: 'PREMIUM', billingCycle: 'monthly' },
-    4970: { tier: 'PREMIUM', billingCycle: 'yearly' }
+    3790: { tier: 'PREMIUM', billingCycle: 'yearly' }
   };
   
   return amountMap[amount] || { tier: '', billingCycle: 'monthly' };

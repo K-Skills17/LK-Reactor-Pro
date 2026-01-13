@@ -1,7 +1,40 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
-export async function POST(request: Request) {
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+/**
+ * Verify Bearer token from Authorization header
+ */
+function verifyBearerToken(request: NextRequest): boolean {
+  const authHeader = request.headers.get('authorization');
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return false;
+  }
+
+  const token = authHeader.substring(7);
+  const expectedToken = process.env.SENDER_SERVICE_TOKEN;
+
+  if (!expectedToken) {
+    console.error('[API] SENDER_SERVICE_TOKEN not configured');
+    return false;
+  }
+
+  return token === expectedToken;
+}
+
+export async function POST(request: NextRequest) {
+  // Verify Bearer token
+  if (!verifyBearerToken(request)) {
+    return NextResponse.json(
+      { valid: false, error: 'Unauthorized - Invalid or missing Bearer token' },
+      { status: 401 }
+    );
+  }
+  
   try {
     const { license_key } = await request.json();
     
