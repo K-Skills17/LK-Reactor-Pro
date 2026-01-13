@@ -10,6 +10,7 @@ import {
   DollarSign,
   UserCheck,
   UserX,
+  Trash2,
 } from 'lucide-react';
 
 interface AnalyticsData {
@@ -88,6 +89,45 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   }, [period]);
+
+  const handleDeleteLead = async (id: string, name: string) => {
+    if (!confirm(`Tem certeza que deseja excluir o lead "${name || 'Sem nome'}"? Esta ação não pode ser desfeita.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/leads/delete?id=${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha ao excluir lead');
+      }
+
+      // Optimistically update UI or Refetch
+      if (data) {
+        setData({
+          ...data,
+          recentLeads: data.recentLeads.filter(l => l.id !== id),
+          abandonedLeads: data.abandonedLeads.filter(l => l.id !== id),
+          overview: {
+            ...data.overview,
+            // We could decrement counts here but simpler to just re-fetch to be accurate
+          }
+        });
+      }
+      
+      // Also trigger a real refetch to get accurate stats
+      fetchAnalytics(authToken);
+      
+    } catch (err) {
+      alert('Erro ao excluir lead');
+      console.error(err);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -363,6 +403,7 @@ export default function AdminDashboard() {
                     <th className="text-left py-2 px-4 font-medium text-gray-700">Email</th>
                     <th className="text-left py-2 px-4 font-medium text-gray-700">Status</th>
                     <th className="text-left py-2 px-4 font-medium text-gray-700">Data</th>
+                    <th className="text-right py-2 px-4 font-medium text-gray-700">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -376,6 +417,15 @@ export default function AdminDashboard() {
                       </td>
                       <td className="py-2 px-4 text-gray-600">
                         {new Date(lead.created_at).toLocaleDateString('pt-BR')}
+                      </td>
+                      <td className="py-2 px-4 text-right">
+                        <button
+                          onClick={() => handleDeleteLead(lead.id, lead.email || 'Lead sem email')}
+                          className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                          title="Excluir Lead"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -399,6 +449,7 @@ export default function AdminDashboard() {
                     <th className="text-left py-2 px-4 font-medium text-gray-700">Clínica</th>
                     <th className="text-left py-2 px-4 font-medium text-gray-700">Receita Perdida</th>
                     <th className="text-left py-2 px-4 font-medium text-gray-700">Data</th>
+                    <th className="text-right py-2 px-4 font-medium text-gray-700">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -413,6 +464,15 @@ export default function AdminDashboard() {
                       </td>
                       <td className="py-2 px-4 text-gray-600">
                         {new Date(lead.created_at).toLocaleDateString('pt-BR')}
+                      </td>
+                      <td className="py-2 px-4 text-right">
+                        <button
+                          onClick={() => handleDeleteLead(lead.id, lead.name || lead.email)}
+                          className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                          title="Excluir Lead"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
