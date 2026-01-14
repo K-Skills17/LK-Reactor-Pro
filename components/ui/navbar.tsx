@@ -32,12 +32,12 @@ export function Navbar() {
             href="/" 
             className="flex items-center group relative"
           >
-            <div className="relative h-12 sm:h-16 md:h-18 lg:h-20 w-auto">
+            <div className="relative h-16 sm:h-20 md:h-24 lg:h-28 w-auto">
               <Image
                 src="/lk-reactor-logo.svg"
                 alt="LK Reactor Pro"
-                width={250}
-                height={80}
+                width={350}
+                height={100}
                 className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                 priority
               />
@@ -106,12 +106,12 @@ export function SimpleNavbar() {
   return (
     <header className="bg-white/95 backdrop-blur-xl border-b border-gray-100 py-4 sm:py-5 md:py-6 px-4 shadow-sm">
       <div className="max-w-4xl mx-auto flex items-center justify-center">
-        <Link href="/" className="relative hover:opacity-90 transition-opacity h-12 sm:h-16 md:h-18">
+        <Link href="/" className="relative hover:opacity-90 transition-opacity h-16 sm:h-20 md:h-24">
           <Image
             src="/lk-reactor-logo.svg"
             alt="LK Reactor Pro"
-            width={240}
-            height={72}
+            width={350}
+            height={100}
             className="h-full w-auto object-contain"
             priority
           />

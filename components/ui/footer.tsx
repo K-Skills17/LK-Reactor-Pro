@@ -13,9 +13,9 @@ export function Footer() {
               <Image
                 src="/lk-reactor-logo.svg"
                 alt="LK Reactor Pro"
-                width={120}
-                height={36}
-                className="h-10 w-auto object-contain"
+                width={180}
+                height={54}
+                className="h-14 w-auto object-contain"
               />
             </div>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
