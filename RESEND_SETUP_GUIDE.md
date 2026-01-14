@@ -94,7 +94,7 @@ Open `lib/email-service.ts` and update line 9:
 
 **Change this:**
 ```typescript
-const DOWNLOAD_URL = 'https://seu-dominio.com/download/LK-Reactor-Setup.exe'; // TODO: Update with real URL
+const DOWNLOAD_URL = 'https://lk-reactor-download.mute-mountain-033a.workers.dev';
 ```
 
 **To this:**

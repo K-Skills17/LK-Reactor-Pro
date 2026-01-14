@@ -32,7 +32,7 @@ export function Navbar() {
             href="/" 
             className="flex items-center group relative"
           >
-            <div className="relative h-16 sm:h-20 md:h-24 lg:h-28 w-auto">
+            <div className="relative h-12 sm:h-16 md:h-18 lg:h-20 w-auto">
               <Image
                 src="/lk-reactor-logo.svg"
                 alt="LK Reactor Pro"
@@ -53,12 +53,6 @@ export function Navbar() {
               Preços
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-emerald-600 transition-all group-hover:w-full"></span>
             </Link>
-            <Link 
-              href="/setup" 
-              className="text-sm font-medium text-gray-700 hover:text-emerald-600 transition-colors relative group"
-            >
-              Download
-              </Link>
             <Link 
               href="/precos" 
               className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-semibold rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden group"
@@ -93,13 +87,6 @@ export function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Preços
-            </Link>
-            <Link 
-              href="/setup" 
-              className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Download
             </Link>
             <Link 
               href="/precos" 

@@ -153,7 +153,7 @@ case 'lead_completed':
       whatsapp: data.whatsapp,
       licenseKey: licenseKey,
       tier: 'FREE',
-      downloadUrl: 'https://your-domain.com/download/LK-Reactor-Setup.exe'
+      downloadUrl: 'https://lk-reactor-download.mute-mountain-033a.workers.dev'
     })
   });
   break;
@@ -176,7 +176,7 @@ await fetch(process.env.MAKE_EMAIL_WEBHOOK_PAID, {
     tier: tier,
     billingCycle: billingCycle,
     amount: amount,
-    downloadUrl: 'https://your-domain.com/download/LK-Reactor-Setup.exe',
+    downloadUrl: 'https://lk-reactor-download.mute-mountain-033a.workers.dev',
     receiptUrl: `https://www.mercadopago.com.br/payments/${paymentId}`
   })
 });
@@ -359,7 +359,7 @@ try {
     tier: tier,
     amount: amount,
     billingCycle: billingCycle,
-    downloadUrl: 'https://your-domain.com/download/LK-Reactor-Setup.exe',
+    downloadUrl: 'https://lk-reactor-download.mute-mountain-033a.workers.dev',
     receiptUrl: `https://www.mercadopago.com.br/payments/${paymentId}`
   });
 } catch (emailError) {

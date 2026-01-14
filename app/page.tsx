@@ -27,7 +27,6 @@ import {
 } from '@/components/ui/wizard';
 import { SimpleNavbar } from '@/components/ui/navbar';
 import Link from 'next/link';
-import { trackLeadStep1, trackLeadStep2, trackLeadCompleted } from '@/lib/analytics';
 
 interface FormData {
   totalPatients: number;
@@ -120,28 +119,9 @@ export default function Home() {
   };
 
   // Navigation handlers
-  const handleNext = async () => {
+  const handleNext = () => {
     if (currentStep === 1 && !validateStep1()) return;
     if (currentStep === 2 && !validateStep2()) return;
-
-    // Track analytics when moving to next step
-    if (currentStep === 1) {
-      // Track Step 1 completion
-      trackLeadStep1({
-        totalPatients: formData.totalPatients,
-        ticketMedio: formData.ticketMedio,
-        inactivePercent: formData.inactivePercent,
-        lostRevenue,
-      });
-    } else if (currentStep === 2) {
-      // Track Step 2 completion
-      trackLeadStep2({
-        clinicName: formData.clinicName,
-        name: formData.name,
-        email: formData.email,
-        whatsapp: formData.whatsapp,
-      });
-    }
 
     setDirection('forward');
     setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
@@ -162,19 +142,6 @@ export default function Home() {
   const submitDiagnostic = async () => {
     setIsSubmitting(true);
     try {
-      // Track lead completion in Supabase
-      await trackLeadCompleted({
-        clinicName: formData.clinicName,
-        name: formData.name,
-        email: formData.email,
-        whatsapp: formData.whatsapp,
-        totalPatients: formData.totalPatients,
-        ticketMedio: formData.ticketMedio,
-        inactivePercent: formData.inactivePercent,
-        lostRevenue,
-      });
-
-      // Send to Make.com webhook (if configured)
       const response = await fetch('/api/submit-diagnostic', {
         method: 'POST',
         headers: {
@@ -419,7 +386,7 @@ export default function Home() {
                     </p>
                   </div>
 
-                  <Link href="/precos">
+                  <Link href={`/precos?email=${encodeURIComponent(formData.email)}`}>
                     <WizardButton>
                       🚀 Ver Planos e Começar Grátis
                     </WizardButton>

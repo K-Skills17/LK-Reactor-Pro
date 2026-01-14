@@ -170,14 +170,14 @@ export default function ObrigadoPremiumAnualPage() {
                 <p className="text-sm text-gray-700 mb-3">
                   Instale o LK Reactor no seu computador Windows.
                 </p>
-                <Link
-                  href="/setup"
+                <a
+                  href="https://lk-reactor-download.mute-mountain-033a.workers.dev"
                   className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all font-medium text-sm shadow-md"
                 >
                   <Download className="w-5 h-5" />
                   Baixar Aplicativo Agora
                   <ArrowRight className="w-5 h-5" />
-                </Link>
+                </a>
               </div>
             </div>
 

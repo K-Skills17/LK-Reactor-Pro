@@ -15,6 +15,24 @@ export function getSessionId(): string {
   return sessionId;
 }
 
+// Track trial activation (FREE plan)
+export async function trackTrialActivated(email: string) {
+  try {
+    const sessionId = getSessionId();
+    await fetch('/api/analytics/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventType: 'trial_activated',
+        sessionId,
+        data: { email },
+      }),
+    });
+  } catch (error) {
+    console.error('Failed to track trial activation:', error);
+  }
+}
+
 // Track page view
 export async function trackPageView(page: string) {
   try {

@@ -47,11 +47,6 @@ export function Footer() {
                   Preços
                 </Link>
               </li>
-              <li>
-                <Link href="/setup" className="hover:text-emerald-500 transition-colors">
-                  Download
-                </Link>
-              </li>
             </ul>
           </div>
 

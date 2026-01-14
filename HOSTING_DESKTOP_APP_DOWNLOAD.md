@@ -40,7 +40,7 @@ public/download/LK-Reactor-Setup.exe
 
 3. Update download URL in `lib/email-service.ts`:
 ```typescript
-const DOWNLOAD_URL = 'https://your-domain.com/download/LK-Reactor-Setup.exe';
+const DOWNLOAD_URL = 'https://lk-reactor-download.mute-mountain-033a.workers.dev';
 ```
 
 4. Commit and push:

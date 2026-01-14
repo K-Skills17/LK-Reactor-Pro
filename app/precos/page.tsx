@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Check, Sparkles, Zap, Shield, X } from 'lucide-react';
 import Link from 'next/link';
 import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
+import { useSearchParams } from 'next/navigation';
 
-export default function PricingPage() {
+function PricingContent() {
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
 
   const tiers = [
@@ -19,8 +22,8 @@ export default function PricingPage() {
       icon: '🟢',
       color: 'emerald',
       popular: false,
-      cta: 'Baixar Grátis',
-      ctaLink: '/setup?plan=free',
+      cta: 'Começar Grátis',
+      ctaLink: email ? `/obrigado?plan=free&email=${encodeURIComponent(email)}` : '/obrigado?plan=free',
       trial: null,
       features: [
         'Reative até 10 pacientes por dia',
@@ -28,16 +31,6 @@ export default function PricingPage() {
         'Teste o sistema sem cartão de crédito',
         'Use por tempo ilimitado',
         'Faça upgrade quando quiser',
-        '❌ 500 mensagens/dia (apenas 10)',
-        '❌ Campanhas personalizadas com IA',
-        '❌ Painel web com estatísticas em tempo real',
-        '❌ Importar CSV com sua base de pacientes',
-        '❌ Deduplicação e lista de bloqueio',
-        '❌ Agendamento automático de campanhas',
-        '❌ Mensagens ilimitadas',
-        '❌ IA com 3 variações A/B/C de cada mensagem',
-        '❌ 7 tipos de campanha prontos',
-        '❌ Suporte prioritário (2h)',
       ],
       limits: '10 mensagens/dia',
       idealFor: 'Dentistas que querem testar antes',
@@ -46,7 +39,7 @@ export default function PricingPage() {
       name: 'PROFESSIONAL',
       subtitle: 'Recupere Pacientes',
       price: 197,
-      priceAnnual: 2128,
+      priceAnnual: 1970,
       description: 'Tudo que você precisa para reativar pacientes.',
       icon: '🔵',
       color: 'blue',
@@ -72,7 +65,7 @@ export default function PricingPage() {
       name: 'PREMIUM',
       subtitle: 'Maximize Resultados',
       price: 497,
-      priceAnnual: 3790,
+      priceAnnual: 4970,
       description: 'Converta mais pacientes com IA avançada.',
       icon: '🟣',
       color: 'purple',
@@ -239,13 +232,8 @@ export default function PricingPage() {
                 <div className="mb-8 space-y-3">
                   {tier.features.map((feature, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      {feature.startsWith('✨') ? (
+                      {feature.startsWith('Tudo do') ? (
                         <span className="text-sm font-semibold text-slate-700 mt-3">{feature}</span>
-                      ) : feature.startsWith('❌') ? (
-                        <>
-                          <X className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
-                          <span className="text-slate-400 text-sm leading-relaxed line-through">{feature.replace('❌ ', '')}</span>
-                        </>
                       ) : (
                         <>
                           <Check className={`w-5 h-5 ${getColorClasses(tier.color, 'text')} flex-shrink-0 mt-0.5`} />
@@ -263,22 +251,33 @@ export default function PricingPage() {
                 </div>
 
                 {/* CTA Button */}
-                <a
-                  href={
-                    tier.name === 'GRÁTIS'
-                      ? tier.ctaLink
-                      : billingCycle === 'annual' && 'ctaLinkAnnual' in tier
-                      ? tier.ctaLinkAnnual
-                      : tier.ctaLink
-                  }
-                  className={`block w-full py-4 rounded-xl font-bold text-center transition-all ${
-                    tier.popular
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:scale-105'
-                      : `${getColorClasses(tier.color, 'bg')} ${getColorClasses(tier.color, 'hover')} text-white`
-                  } shadow-md`}
-                >
-                  {tier.cta}
-                </a>
+                {tier.name === 'GRÁTIS' ? (
+                  <Link
+                    href={tier.ctaLink}
+                    className={`block w-full py-4 rounded-xl font-bold text-center transition-all ${
+                      tier.popular
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:scale-105'
+                        : `${getColorClasses(tier.color, 'bg')} ${getColorClasses(tier.color, 'hover')} text-white`
+                    } shadow-md`}
+                  >
+                    {tier.cta}
+                  </Link>
+                ) : (
+                  <a
+                    href={
+                      billingCycle === 'annual' && 'ctaLinkAnnual' in tier
+                        ? (tier as any).ctaLinkAnnual
+                        : tier.ctaLink
+                    }
+                    className={`block w-full py-4 rounded-xl font-bold text-center transition-all ${
+                      tier.popular
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:scale-105'
+                        : `${getColorClasses(tier.color, 'bg')} ${getColorClasses(tier.color, 'hover')} text-white`
+                    } shadow-md`}
+                  >
+                    {tier.cta}
+                  </a>
+                )}
               </div>
             </div>
           ))}
@@ -395,16 +394,10 @@ export default function PricingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/setup"
-              className="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all"
+              href={email ? `/obrigado?plan=free&email=${encodeURIComponent(email)}` : "/obrigado?plan=free"}
+              className="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all text-center"
             >
               Começar Grátis
-            </Link>
-            <Link
-              href="/#recursos"
-              className="px-8 py-4 bg-blue-700 text-white rounded-xl font-bold hover:bg-blue-800 transition-all border-2 border-blue-400"
-            >
-              Ver Demonstração
             </Link>
           </div>
           <p className="text-sm text-blue-200 mt-6">
@@ -434,7 +427,6 @@ export default function PricingPage() {
               <ul className="space-y-2 text-sm text-slate-600">
                 <li><Link href="/#recursos" className="hover:text-blue-600">Recursos</Link></li>
                 <li><Link href="/precos" className="hover:text-blue-600">Preços</Link></li>
-                <li><Link href="/setup" className="hover:text-blue-600">Download</Link></li>
               </ul>
             </div>
             
@@ -462,5 +454,13 @@ export default function PricingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <PricingContent />
+    </Suspense>
   );
 }

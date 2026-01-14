@@ -157,7 +157,7 @@ export async function sendFreeLicenseEmail(data: {
     </div>
 
     <div style="text-align: center;">
-      <a href="https://seu-dominio.com/download/LK-Reactor-Setup.exe" class="button">📥 BAIXAR APLICATIVO AGORA</a>
+      <a href="https://lk-reactor-download.mute-mountain-033a.workers.dev" class="button">📥 BAIXAR APLICATIVO AGORA</a>
     </div>
 
     <div class="section">
@@ -310,7 +310,7 @@ export async function sendPaidLicenseEmail(data: {
     </div>
 
     <div style="text-align: center;">
-      <a href="https://seu-dominio.com/download/LK-Reactor-Setup.exe" class="button">📥 BAIXAR APLICATIVO AGORA</a>
+      <a href="https://lk-reactor-download.mute-mountain-033a.workers.dev" class="button">📥 BAIXAR APLICATIVO AGORA</a>
     </div>
 
     <div class="section">

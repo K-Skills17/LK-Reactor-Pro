@@ -176,7 +176,9 @@ export async function POST(request: NextRequest) {
 
               console.log(`✅ FREE subscription created for clinic: ${newClinic.id}`);
 
-              // ✨ Send welcome email with license key
+              // 📧 NOTE: We no longer send the email here. 
+              // We wait until they actually click "Download" on the /obrigado page.
+              /*
               try {
                 await sendFreeLicenseEmail({
                   name: data.name,
@@ -188,8 +190,8 @@ export async function POST(request: NextRequest) {
                 console.log(`✅ Welcome email sent to: ${data.email}`);
               } catch (emailError) {
                 console.error('❌ Error sending welcome email:', emailError);
-                // Don't fail the whole process if email fails
               }
+              */
             }
           } else {
             console.log(`ℹ️ Clinic already exists for email: ${data.email}`);
@@ -200,6 +202,40 @@ export async function POST(request: NextRequest) {
         }
         break;
 
+      case 'trial_activated':
+        // ✨ Send email on trial activation (when they reach /obrigado)
+        if (data.email) {
+          try {
+            const { data: clinic } = await supabaseAdmin
+              .from('clinics')
+              .select('name, clinic_name, license_key, phone')
+              .eq('email', data.email)
+              .single();
+
+            if (clinic) {
+              await sendFreeLicenseEmail({
+                name: clinic.name,
+                email: data.email,
+                clinicName: clinic.clinic_name,
+                licenseKey: clinic.license_key || 'N/A',
+                whatsapp: clinic.phone || 'N/A'
+              });
+              console.log(`✅ Welcome email sent on trial activation to: ${data.email}`);
+            }
+          } catch (emailError) {
+            console.error('❌ Error sending welcome email on trial activation:', emailError);
+          }
+        }
+
+        // Track as conversion event
+        await supabaseAdmin.from('conversion_events').insert({
+          session_id: sessionId,
+          event_name: 'CompleteRegistration',
+          event_value: 0,
+          event_data: { plan_type: 'free' },
+        });
+        break;
+
       case 'download':
         await supabaseAdmin.from('downloads').insert({
           session_id: sessionId,
@@ -207,14 +243,6 @@ export async function POST(request: NextRequest) {
           plan_type: data.planType || 'free',
           license_key: data.licenseKey,
           source_page: data.sourcePage,
-        });
-
-        // Track as conversion event
-        await supabaseAdmin.from('conversion_events').insert({
-          session_id: sessionId,
-          event_name: 'CompleteRegistration',
-          event_value: 0,
-          event_data: { plan_type: data.planType },
         });
         break;
 

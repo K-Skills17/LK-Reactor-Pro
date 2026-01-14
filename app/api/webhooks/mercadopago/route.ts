@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import { sendPaidLicenseEmail } from '@/lib/email-service';
 
 export async function POST(request: Request) {
   try {
@@ -105,7 +104,7 @@ export async function POST(request: Request) {
     // Get clinic info for logging/email
     const { data: clinic } = await supabaseAdmin
       .from('clinics')
-      .select('email, name, clinic_name, license_key')
+      .select('email, name, clinic_name')
       .eq('id', clinicId)
       .single();
     
@@ -119,27 +118,8 @@ export async function POST(request: Request) {
       period_end: periodEnd.toISOString()
     });
     
-    // ✨ Send activation email with license key
-    if (clinic) {
-      try {
-        await sendPaidLicenseEmail({
-          name: clinic.name || clinic.clinic_name || 'Cliente',
-          email: clinic.email,
-          clinicName: clinic.clinic_name || clinic.name || 'Clínica',
-          licenseKey: clinic.license_key,
-          tier: tier as 'PRO' | 'PREMIUM',
-          amount: amount,
-          billingCycle: billingCycle,
-          paymentId: paymentId
-        });
-        console.log(`✅ Activation email sent to: ${clinic.email}`);
-      } catch (emailError) {
-        console.error('❌ Failed to send activation email:', emailError);
-        // Don't fail the webhook if email fails - subscription is already activated
-      }
-    } else {
-      console.error('❌ Could not send activation email: clinic data not found');
-    }
+    // TODO: Send activation email to clinic.email
+    // await sendActivationEmail(clinic.email, clinic.name, tier, licenseKey);
     
     return NextResponse.json({ 
       received: true, 
@@ -192,9 +172,9 @@ function getTierFromAmount(amount: number): { tier: string; billingCycle: string
   // Match payment amounts to tiers and billing cycles
   const amountMap: Record<number, { tier: string; billingCycle: string }> = {
     197: { tier: 'PRO', billingCycle: 'monthly' },
-    2128: { tier: 'PRO', billingCycle: 'yearly' },
+    1970: { tier: 'PRO', billingCycle: 'yearly' },
     497: { tier: 'PREMIUM', billingCycle: 'monthly' },
-    3790: { tier: 'PREMIUM', billingCycle: 'yearly' }
+    4970: { tier: 'PREMIUM', billingCycle: 'yearly' }
   };
   
   return amountMap[amount] || { tier: '', billingCycle: 'monthly' };
