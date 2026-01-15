@@ -98,10 +98,10 @@ function ThankYouContent() {
                   <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
                     <MessageSquare className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="font-bold text-gray-900">500 Mensagens/Dia</h3>
+                  <h3 className="font-bold text-gray-900">500 Mensagens/Mês</h3>
                 </div>
                 <p className="text-sm text-gray-700 leading-relaxed">
-                  Envie até 500 mensagens diariamente com segurança.
+                  Envie até 500 mensagens por mês com segurança.
                 </p>
               </div>
 
@@ -296,7 +296,7 @@ function ThankYouContent() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Sparkles className="w-5 h-5 text-yellow-300 flex-shrink-0 mt-0.5" />
-                  <span>Mensagens ilimitadas (vs 500/dia)</span>
+                  <span>Mensagens ilimitadas (vs 500/mês)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Sparkles className="w-5 h-5 text-yellow-300 flex-shrink-0 mt-0.5" />

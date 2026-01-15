@@ -547,7 +547,7 @@ Valor: R$ {{amount}}
 ━━━━━━━━━━━━━━━━━━━━
 
 {{#if isPro}}
-✅ Reative até 500 pacientes por dia
+✅ Reative até 500 pacientes por mês
 ✅ IA cria mensagens profissionais
 ✅ Campanhas personalizadas ilimitadas
 ✅ Painel de resultados em tempo real

@@ -155,7 +155,7 @@ This removes the "Preços" and "Download" buttons, showing only the logo.
       cta: 'Ativar Professional',
       ctaLink: process.env.NEXT_PUBLIC_PRO_PAYMENT_URL || '#',
       features: [
-        'Reative até 500 pacientes por dia',
+        'Reative até 500 pacientes por mês',
         'Crie campanhas personalizadas sem escrever nada',
         'IA cria mensagens profissionais automaticamente',
         'Acompanhe resultados em tempo real no painel',
@@ -163,7 +163,7 @@ This removes the "Preços" and "Download" buttons, showing only the logo.
         'Evite envios duplicados e pacientes bloqueados',
         'Programa envios automáticos no piloto',
       ],
-      limits: '500 mensagens/dia',
+      limits: '500 mensagens/mês',
       idealFor: 'Clínicas que querem resultados previsíveis',
     },
     {
@@ -209,7 +209,7 @@ This changes features from technical specs to **benefits** - what the dentist wi
 1. Landing page shows ONLY logo (no navigation)
 2. After calculator, redirects to FULL pricing page with all 3 plans
 3. Features describe what dentists GET:
-   - "Reative até 500 pacientes por dia"
+   - "Reative até 500 pacientes por mês"
    - "Crie campanhas personalizadas sem escrever nada"
    - "IA cria mensagens profissionais automaticamente"
    - "Acompanhe resultados em tempo real"

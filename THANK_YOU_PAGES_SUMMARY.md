@@ -16,7 +16,7 @@
 - **Price**: R$ 197/mês
 - **Trial**: 14 days free
 - **Features**:
-  - 500 messages/day
+  - 500 messages/month
   - Complete web dashboard
   - Personalized campaigns
   - CSV import + automation

@@ -50,7 +50,7 @@ function PricingContent() {
       trial: '14 dias grátis',
       features: [
         '✨ Tudo no plano grátis +',
-        'Reative até 500 pacientes por dia',
+        'Reative até 500 pacientes por mês',
         'Crie campanhas personalizadas sem escrever nada',
         'IA cria mensagens profissionais automaticamente',
         'Acompanhe resultados em tempo real no painel',
@@ -58,7 +58,7 @@ function PricingContent() {
         'Evite envios duplicados e pacientes bloqueados',
         'Configure envios automáticos no piloto automático',
       ],
-      limits: '500 mensagens/dia',
+      limits: '500 mensagens/mês',
       idealFor: 'Clínicas que querem resultados previsíveis',
     },
     {

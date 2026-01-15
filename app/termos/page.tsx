@@ -99,7 +99,7 @@ export default function TermsOfServicePage() {
             <h3 className="text-xl font-semibold text-gray-900 mb-3">5.1 Planos Disponíveis</h3>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li><strong>Grátis:</strong> 10 mensagens/dia, uso ilimitado</li>
-              <li><strong>Professional:</strong> 500 mensagens/dia, R$197/mês (14 dias grátis)</li>
+              <li><strong>Professional:</strong> 500 mensagens/mês, R$197/mês (14 dias grátis)</li>
               <li><strong>Premium:</strong> Mensagens ilimitadas, R$497/mês (14 dias grátis)</li>
             </ul>
 

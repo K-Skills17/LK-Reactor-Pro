@@ -65,6 +65,26 @@ export async function POST(request: Request) {
       .eq('clinic_id', clinic.id)
       .eq('date', today)
       .single();
+
+    // Get monthly usage (from first day of current month)
+    const firstDayOfMonth = new Date();
+    firstDayOfMonth.setDate(1);
+    const monthStart = firstDayOfMonth.toISOString().split('T')[0];
+    
+    const { data: monthlyUsageData } = await supabaseAdmin
+      .from('usage_tracking')
+      .select('messages_sent, ai_generations, campaigns_created')
+      .eq('clinic_id', clinic.id)
+      .gte('date', monthStart);
+
+    const monthlyUsage = (monthlyUsageData || []).reduce(
+      (acc, curr) => ({
+        messages_sent: acc.messages_sent + (curr.messages_sent || 0),
+        ai_generations: acc.ai_generations + (curr.ai_generations || 0),
+        campaigns_created: acc.campaigns_created + (curr.campaigns_created || 0),
+      }),
+      { messages_sent: 0, ai_generations: 0, campaigns_created: 0 }
+    );
     
     return NextResponse.json({
       valid: true,
@@ -89,7 +109,10 @@ export async function POST(request: Request) {
       usage: {
         messages_sent_today: usage?.messages_sent || 0,
         ai_generations_today: usage?.ai_generations || 0,
-        campaigns_created_today: usage?.campaigns_created || 0
+        campaigns_created_today: usage?.campaigns_created || 0,
+        messages_sent_this_month: monthlyUsage.messages_sent,
+        ai_generations_this_month: monthlyUsage.ai_generations,
+        campaigns_created_this_month: monthlyUsage.campaigns_created
       }
     });
     
@@ -106,6 +129,7 @@ function getTierFeatures(tier: string) {
   const features: Record<string, any> = {
     FREE: {
       daily_limit: 10,
+      monthly_limit: 300,
       unlimited_messages: false,
       ai_enabled: false,
       ai_daily_limit: 0,
@@ -114,7 +138,8 @@ function getTierFeatures(tier: string) {
       campaign_tracking: false
     },
     PRO: {
-      daily_limit: 500,
+      daily_limit: 50, // Capped to ensure monthly limit of 500 is respected and avoid spam
+      monthly_limit: 500,
       unlimited_messages: false,
       ai_enabled: true,
       ai_daily_limit: 5,
@@ -124,6 +149,7 @@ function getTierFeatures(tier: string) {
     },
     PREMIUM: {
       daily_limit: 999999,
+      monthly_limit: 999999,
       unlimited_messages: true,
       ai_enabled: true,
       ai_daily_limit: 20,

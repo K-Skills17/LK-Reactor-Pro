@@ -9,8 +9,9 @@ import {
   BarChart3,
   Calendar,
   MessageSquare,
-  Key,
-  Copy,
+  Mail,
+  Send,
+  Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { SimpleNavbar } from '@/components/ui/navbar';
@@ -21,30 +22,45 @@ import { trackDownload, trackTrialActivated } from '@/lib/analytics';
 
 function ThankYouContent() {
   const searchParams = useSearchParams();
-  const email = searchParams.get('email');
-  const [licenseKey, setLicenseKey] = useState('Carregando...');
+  const initialEmail = searchParams.get('email') || '';
+  const [email, setEmail] = useState(initialEmail);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   useEffect(() => {
-    async function fetchClinicData() {
-      if (email) {
-        try {
-          // Trigger trial activation email and tracking
-          trackTrialActivated(email);
-
-          const response = await fetch(`/api/clinics/get-by-email?email=${encodeURIComponent(email)}`);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.license_key) {
-              setLicenseKey(data.license_key);
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching clinic data:', error);
-        }
-      }
+    if (initialEmail) {
+      // Trigger trial activation email tracking
+      trackTrialActivated(initialEmail);
     }
-    fetchClinicData();
-  }, [email]);
+  }, [initialEmail]);
+
+  const handleResendEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsSubmitting(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/auth/resend-license', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Sua chave de ativação foi enviada! Verifique sua caixa de entrada e pasta de spam.' });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Erro ao enviar email. Tente novamente.' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Erro de conexão. Tente novamente.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const downloadUrl = 'https://lk-reactor-download.mute-mountain-033a.workers.dev';
 
@@ -52,7 +68,6 @@ function ThankYouContent() {
     trackDownload({
       email: email || undefined,
       planType: 'free',
-      licenseKey: licenseKey !== 'Carregando...' ? licenseKey : undefined,
       sourcePage: '/obrigado'
     });
   };
@@ -87,29 +102,60 @@ function ThankYouContent() {
       </section>
 
       <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-8">
-        {/* LICENSE KEY DISPLAY */}
-        <section className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 md:p-8 space-y-4 shadow-lg">
-          <div className="flex items-start gap-3">
-            <Key className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-            <div className="flex-1 space-y-3">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
-                Sua Chave de Teste Grátis
-              </h2>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Copie esta chave. Você precisará dela para ativar o aplicativo.
-                Esta é uma licença de teste válida por 14 dias.
-              </p>
-              <div className="bg-white border-2 border-blue-300 rounded-lg p-4 flex items-center justify-between gap-3 shadow-inner">
-                <code className="text-base sm:text-lg font-mono font-bold text-blue-600 break-all">
-                  {licenseKey}
-                </code>
-                <button
-                  onClick={() => navigator.clipboard.writeText(licenseKey)}
-                  className="flex-shrink-0 p-2 hover:bg-blue-100 rounded-lg transition-colors"
-                  title="Copiar chave"
-                >
-                  <Copy className="w-5 h-5 text-blue-600" />
-                </button>
+        {/* EMAIL ACTIVATION SECTION */}
+        <section className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 md:p-8 space-y-6 shadow-lg">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <Mail className="w-6 h-6 text-blue-600" />
+            </div>
+            <div className="flex-1 space-y-4">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mb-2">
+                  Ative seu LK Reactor Pro
+                </h2>
+                <p className="text-base text-gray-700 leading-relaxed">
+                  Sua chave de ativação foi enviada para o seu email. Verifique sua caixa de entrada e use-a para desbloquear o sistema.
+                </p>
+              </div>
+
+              <div className="bg-white border border-blue-100 rounded-xl p-6 shadow-sm">
+                <p className="text-sm font-medium text-gray-600 mb-4">
+                  Não recebeu o email? Confirme seu email abaixo e reenviaremos agora mesmo:
+                </p>
+                <form onSubmit={handleResendEmail} className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-1">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="seu@email.com"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold disabled:opacity-50 shadow-md hover:shadow-lg"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Send className="w-5 h-5" />
+                    )}
+                    Reenviar Chave
+                  </button>
+                </form>
+
+                {message && (
+                  <div className={`mt-4 p-3 rounded-lg text-sm flex items-start gap-2 ${
+                    message.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'
+                  }`}>
+                    {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <Mail className="w-5 h-5 flex-shrink-0" />}
+                    <span>{message.text}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

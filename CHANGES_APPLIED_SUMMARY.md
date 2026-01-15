@@ -43,9 +43,9 @@
 
 ### PROFESSIONAL Plan (R$ 197/mês)
 - **Trial**: 🎁 **14 dias grátis**
-- **Benefit**: "Reative até 500 pacientes por dia"
+- **Benefit**: "Reative até 500 pacientes por mês"
 - **Benefits**:
-  - Reative até 500 pacientes por dia
+  - Reative até 500 pacientes por mês
   - Crie campanhas personalizadas sem escrever nada
   - IA cria mensagens profissionais automaticamente
   - Acompanhe resultados em tempo real no painel
@@ -122,7 +122,7 @@
    ↓
 7. Sees ALL 3 plans with benefits:
    - FREE: 10 msgs/day, forever free
-   - PROFESSIONAL: 500 msgs/day, 14-day trial, R$ 197/mês
+   - PROFESSIONAL: 500 msgs/month, 14-day trial, R$ 197/mês
    - PREMIUM: Unlimited msgs, 14-day trial, R$ 497/mês
    ↓
 8. Chooses plan:

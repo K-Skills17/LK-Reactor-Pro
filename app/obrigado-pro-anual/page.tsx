@@ -78,10 +78,10 @@ export default function ObrigadoProAnualPage() {
                 <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                   <MessageSquare className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="font-bold text-gray-900">500 Mensagens/Dia</h3>
+                <h3 className="font-bold text-gray-900">500 Mensagens/Mês</h3>
               </div>
               <p className="text-sm text-gray-700 leading-relaxed">
-                Reative até 500 pacientes por dia com mensagens personalizadas via WhatsApp.
+                Reative até 500 pacientes por mês com mensagens personalizadas via WhatsApp.
               </p>
             </div>
 

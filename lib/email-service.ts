@@ -110,7 +110,7 @@ export async function sendFreeLicenseEmail(data: {
       <h3>🚀 Quer Reativar MAIS Pacientes?</h3>
       <p>Após o período de teste gratuito, você pode escolher um plano pago:</p>
       <ul style="margin: 15px 0;">
-        <li><strong>PRO:</strong> Até 500 pacientes/dia + IA para criar mensagens + R$ 197/mês</li>
+        <li><strong>PRO:</strong> Até 500 pacientes/mês + IA para criar mensagens + R$ 197/mês</li>
         <li><strong>PREMIUM:</strong> Pacientes ILIMITADOS + IA Avançada + R$ 497/mês</li>
       </ul>
       <p style="margin-top: 15px;">
@@ -293,7 +293,7 @@ export async function sendPaidLicenseEmail(data: {
     <div class="section">
       <h3>✨ O Que Você Tem Agora (Plano ${tierName})</h3>
       ${data.tier === 'PRO' ? `
-        <div class="feature">Reative até 500 pacientes por dia</div>
+        <div class="feature">Reative até 500 pacientes por mês</div>
         <div class="feature">IA cria mensagens profissionais automaticamente</div>
         <div class="feature">Campanhas personalizadas ilimitadas</div>
         <div class="feature">Painel de resultados em tempo real</div>

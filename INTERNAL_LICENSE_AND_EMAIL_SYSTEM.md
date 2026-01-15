@@ -183,7 +183,7 @@ export async function sendFreeLicenseEmail(data: {
       <h3 style="margin-top: 0;">💡 Quer Reativar MAIS Pacientes?</h3>
       <p>Após o período de teste, veja nossos planos:</p>
       <ul>
-        <li><strong>PRO:</strong> Até 500 pacientes/dia + IA</li>
+        <li><strong>PRO:</strong> Até 500 pacientes/mês + IA</li>
         <li><strong>PREMIUM:</strong> Pacientes ILIMITADOS + IA Avançada</li>
       </ul>
       <a href="https://seu-dominio.com/precos" style="color: #f59e0b; text-decoration: underline;">Ver Planos e Preços</a>
@@ -326,7 +326,7 @@ export async function sendPaidLicenseEmail(data: {
     <div class="section">
       <h3>✨ O Que Você Tem Agora (Plano ${tierName}):</h3>
       ${data.tier === 'PRO' ? `
-        <div class="feature">Reative até 500 pacientes por dia</div>
+        <div class="feature">Reative até 500 pacientes por mês</div>
         <div class="feature">IA cria mensagens profissionais automaticamente</div>
         <div class="feature">Campanhas personalizadas ilimitadas</div>
         <div class="feature">Painel de resultados em tempo real</div>
