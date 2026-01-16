@@ -344,7 +344,7 @@ export default function Home() {
                       Receita Perdida por Mês
                     </p>
                   </div>
-                  <p className="text-4xl sm:text-5xl md:text-6xl font-black text-red-600 break-words mb-4">
+                  <p className="text-3xl sm:text-4xl md:text-5xl font-black text-red-600 whitespace-nowrap mb-4">
                     {formatCurrency(lostRevenue)}
                   </p>
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl">
