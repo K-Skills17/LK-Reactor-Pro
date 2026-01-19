@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     }
     
     // Get subscription
-    const { data: subscription, error: subError } = await supabaseAdmin
+    let { data: subscription, error: subError } = await supabaseAdmin
       .from('subscriptions')
       .select('*')
       .eq('clinic_id', clinic.id)
@@ -41,9 +41,48 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+
+    // Check if subscription has expired and has a pending downgrade/change
+    const now = new Date();
+    if (subscription.current_period_end && new Date(subscription.current_period_end) < now && (subscription as any).next_tier) {
+      const nextTier = (subscription as any).next_tier;
+      const nextCycle = (subscription as any).next_billing_cycle || 'monthly';
+      
+      console.log(`🔄 Applying pending plan change: ${subscription.tier} -> ${nextTier}`);
+      
+      // Calculate new period dates
+      const newPeriodEnd = new Date(now);
+      if (nextCycle === 'yearly') {
+        newPeriodEnd.setFullYear(newPeriodEnd.getFullYear() + 1);
+      } else {
+        newPeriodEnd.setMonth(newPeriodEnd.getMonth() + 1);
+      }
+
+      await supabaseAdmin.from('clinics').update({ tier: nextTier }).eq('id', clinic.id);
+      const { data: updatedSub } = await supabaseAdmin
+        .from('subscriptions')
+        .update({
+          tier: nextTier,
+          billing_cycle: nextCycle,
+          current_period_start: now.toISOString(),
+          current_period_end: newPeriodEnd.toISOString(),
+          next_tier: null,
+          next_billing_cycle: null,
+          status: nextTier === 'FREE' ? 'cancelled' : 'active',
+          updated_at: now.toISOString()
+        } as any)
+        .eq('id', subscription.id)
+        .select()
+        .single();
+      
+      if (updatedSub) {
+        subscription = updatedSub;
+        clinic.tier = nextTier;
+      }
+    }
     
     // Check if subscription is active
-    if (subscription.status !== 'active') {
+    if (subscription.status !== 'active' && subscription.status !== 'trial') {
       return NextResponse.json(
         { 
           valid: false, 

@@ -69,22 +69,41 @@ export async function POST(request: Request) {
       periodEnd.setMonth(periodEnd.getMonth() + 1);
     }
     
-    // Update subscription status to active
+    // Update subscription status to active (using upsert to handle new subscriptions or upgrades)
     const { error: subError } = await supabaseAdmin
       .from('subscriptions')
-      .update({
+      .upsert({
+        clinic_id: clinicId,
+        tier,
         status: 'active',
+        billing_cycle: billingCycle,
         mercadopago_payment_id: paymentId,
         current_period_start: now.toISOString(),
         current_period_end: periodEnd.toISOString(),
+        next_tier: null,
+        next_billing_cycle: null,
+        cancel_at_period_end: false,
         updated_at: now.toISOString()
-      })
-      .eq('clinic_id', clinicId)
-      .eq('tier', tier);
+      }, { onConflict: 'clinic_id' }) as any;
     
     if (subError) {
       console.error('❌ Error updating subscription:', subError);
-      throw subError;
+      // Try a regular update if upsert with clinic_id conflict doesn't work as expected
+      await supabaseAdmin
+        .from('subscriptions')
+        .update({
+          tier,
+          status: 'active',
+          billing_cycle: billingCycle,
+          mercadopago_payment_id: paymentId,
+          current_period_start: now.toISOString(),
+          current_period_end: periodEnd.toISOString(),
+          next_tier: null,
+          next_billing_cycle: null,
+          cancel_at_period_end: false,
+          updated_at: now.toISOString()
+        })
+        .eq('clinic_id', clinicId);
     }
     
     // Update clinic tier

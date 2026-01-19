@@ -107,6 +107,16 @@ export async function sendFreeLicenseEmail(data: {
     </div>
 
     <div class="highlight-box">
+      <h3>🚀 Gerenciar sua Assinatura</h3>
+      <p>Você pode fazer o upgrade, downgrade ou gerenciar sua conta a qualquer momento:</p>
+      <p style="margin-top: 15px;">
+        <a href="https://protocoloreceitaoculta.com.br/assinatura?email=${encodeURIComponent(data.email)}&license_key=${data.licenseKey}" style="color: #f59e0b; font-weight: bold; text-decoration: underline;">
+          Gerenciar Minha Assinatura →
+        </a>
+      </p>
+    </div>
+
+    <div class="highlight-box">
       <h3>🚀 Quer Reativar MAIS Pacientes?</h3>
       <p>Após o período de teste gratuito, você pode escolher um plano pago:</p>
       <ul style="margin: 15px 0;">
@@ -287,6 +297,16 @@ export async function sendPaidLicenseEmail(data: {
       </ol>
       <p style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid ${tierColor};">
         💡 <strong>Dica:</strong> Aproveite todas as funcionalidades ${tierName} agora mesmo!
+      </p>
+    </div>
+
+    <div class="section" style="background: #fdf2f2; border-left-color: #ef4444;">
+      <h3 style="color: #ef4444;">⚙️ Gerenciar sua Assinatura</h3>
+      <p>Precisa alterar seu plano ou atualizar seus dados?</p>
+      <p style="margin-top: 10px;">
+        <a href="https://protocoloreceitaoculta.com.br/assinatura?email=${encodeURIComponent(data.email)}&license_key=${data.licenseKey}" style="color: #ef4444; font-weight: bold; text-decoration: underline;">
+          Acessar Painel de Assinatura →
+        </a>
       </p>
     </div>
 
