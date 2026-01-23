@@ -3,33 +3,7 @@
  * https://developers.facebook.com/docs/marketing-api/conversions-api
  */
 
-const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
-const FB_ACCESS_TOKEN = process.env.FB_CAPI_ACCESS_TOKEN;
-const FB_TEST_EVENT_CODE = process.env.FB_TEST_EVENT_CODE; // Optional: for testing
-
-interface FacebookEvent {
-  event_name: string;
-  event_time: number;
-  event_id: string;
-  action_source: 'website';
-  event_source_url: string;
-  user_data: {
-    client_ip_address?: string;
-    client_user_agent?: string;
-    em?: string; // hashed email
-    ph?: string; // hashed phone
-    fn?: string; // hashed first name
-    ln?: string; // hashed last name
-    fbp?: string; // Facebook browser ID
-    fbc?: string; // Facebook click ID
-  };
-  custom_data?: {
-    currency?: string;
-    value?: number;
-    contentName?: string;
-    contentType?: string;
-  };
-}
+import crypto from 'crypto';
 
 /**
  * Hash data using SHA-256 (required by Facebook)
@@ -40,20 +14,15 @@ async function hashData(data: string): Promise<string> {
   // Normalize: lowercase and trim
   const normalized = data.toLowerCase().trim();
   
-  // Hash using SubtleCrypto API (available in Node.js 15+)
-  const encoder = new TextEncoder();
-  const dataBuffer = encoder.encode(normalized);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  
-  return hashHex;
+  // Hash using Node.js crypto module
+  return crypto.createHash('sha256').update(normalized).digest('hex');
 }
 
 /**
  * Get Facebook browser ID from cookies
  */
 function getFbp(cookies: string): string | undefined {
+  if (!cookies) return undefined;
   const match = cookies.match(/(_fbp|fbp)=([^;]+)/);
   return match ? match[2] : undefined;
 }
@@ -62,6 +31,7 @@ function getFbp(cookies: string): string | undefined {
  * Get Facebook click ID from cookies
  */
 function getFbc(cookies: string): string | undefined {
+  if (!cookies) return undefined;
   const match = cookies.match(/(_fbc|fbc)=([^;]+)/);
   return match ? match[2] : undefined;
 }
@@ -88,9 +58,13 @@ export async function sendEventToCAPI(
     contentType?: string;
   }
 ): Promise<boolean> {
+  const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
+  const FB_ACCESS_TOKEN = process.env.FB_CAPI_ACCESS_TOKEN;
+  const FB_TEST_EVENT_CODE = process.env.FB_TEST_EVENT_CODE;
+
   // Skip if CAPI not configured
   if (!FB_PIXEL_ID || !FB_ACCESS_TOKEN) {
-    console.warn('[CAPI] Pixel ID or Access Token not configured');
+    console.warn('[CAPI] Pixel ID or Access Token not configured. Pixel ID:', FB_PIXEL_ID, 'Token exists:', !!FB_ACCESS_TOKEN);
     return false;
   }
 
@@ -101,7 +75,7 @@ export async function sendEventToCAPI(
 
     // Build user data with hashing
     const hashedUserData: any = {
-      client_ip_address: ipAddress,
+      client_ip_address: ipAddress === '::1' ? '127.0.0.1' : ipAddress,
       client_user_agent: userAgent,
       fbp: getFbp(cookies),
       fbc: getFbc(cookies),
@@ -109,18 +83,18 @@ export async function sendEventToCAPI(
 
     // Hash PII if provided
     if (userData?.email) {
-      hashedUserData.em = await hashData(userData.email);
+      hashedUserData.em = [await hashData(userData.email)];
     }
     if (userData?.phone) {
       // Remove non-numeric characters before hashing
       const cleanPhone = userData.phone.replace(/\D/g, '');
-      hashedUserData.ph = await hashData(cleanPhone);
+      hashedUserData.ph = [await hashData(cleanPhone)];
     }
     if (userData?.firstName) {
-      hashedUserData.fn = await hashData(userData.firstName);
+      hashedUserData.fn = [await hashData(userData.firstName)];
     }
     if (userData?.lastName) {
-      hashedUserData.ln = await hashData(userData.lastName);
+      hashedUserData.ln = [await hashData(userData.lastName)];
     }
 
     // Build event payload
@@ -138,16 +112,21 @@ export async function sendEventToCAPI(
       event.custom_data = {
         currency: customData.currency || 'BRL',
         value: customData.value,
-        contentName: customData.contentName,
-        contentType: customData.contentType,
+        content_name: customData.contentName,
+        content_type: customData.contentType,
       };
     }
 
     // Build request payload
-    const payload = {
+    const payload: any = {
       data: [event],
-      test_event_code: FB_TEST_EVENT_CODE, // Include if testing
     };
+
+    if (FB_TEST_EVENT_CODE) {
+      payload.test_event_code = FB_TEST_EVENT_CODE;
+    }
+
+    console.log('[CAPI] Sending payload to Facebook:', JSON.stringify(payload, null, 2));
 
     // Send to Facebook Conversions API
     const response = await fetch(
@@ -164,16 +143,40 @@ export async function sendEventToCAPI(
     const result = await response.json();
 
     if (!response.ok) {
-      console.error('[CAPI] Error response:', JSON.stringify(result, null, 2));
+      console.error('[CAPI] Error response from Facebook:', JSON.stringify(result, null, 2));
       return false;
     }
 
-    console.log('[CAPI] Event sent successfully:', eventName, 'Event ID:', eventId, 'Result:', JSON.stringify(result, null, 2));
+    console.log('[CAPI] Event sent successfully to Facebook:', eventName, 'Event ID:', eventId, 'Result:', JSON.stringify(result, null, 2));
     return true;
   } catch (error) {
-    console.error('[CAPI] Error sending event:', error);
+    console.error('[CAPI] Unexpected error sending event:', error);
     return false;
   }
+}
+
+interface FacebookEvent {
+  event_name: string;
+  event_time: number;
+  event_id: string;
+  action_source: 'website';
+  event_source_url: string;
+  user_data: {
+    client_ip_address?: string;
+    client_user_agent?: string;
+    em?: string[];
+    ph?: string[];
+    fn?: string[];
+    ln?: string[];
+    fbp?: string;
+    fbc?: string;
+  };
+  custom_data?: {
+    currency?: string;
+    value?: number;
+    content_name?: string;
+    content_type?: string;
+  };
 }
 
 /**

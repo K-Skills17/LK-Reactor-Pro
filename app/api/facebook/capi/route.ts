@@ -22,11 +22,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { eventName, userData, customData } = body;
 
+    console.log('[CAPI Proxy] Received event:', eventName, 'User Data keys:', userData ? Object.keys(userData) : 'none');
+
     // Get request metadata
     const url = request.headers.get('referer') || request.url;
     const userAgent = request.headers.get('user-agent') || '';
     const ipAddress = request.headers.get('x-forwarded-for') || 
                      request.headers.get('x-real-ip') || 
+                     request.ip ||
                      '';
     const cookies = request.headers.get('cookie') || '';
 
